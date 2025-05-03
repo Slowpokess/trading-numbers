@@ -1482,8 +1482,10 @@
                 document.getElementById('loading-spinner').classList.remove('hidden');
                 document.getElementById('error-message').style.display = 'none';
                 
-                // Используем локальный прокси-сервер для обхода CORS
-                const proxyUrl = 'http://localhost:3000';
+                // Используем прокси-сервер для обхода CORS
+                const proxyUrl = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1' 
+                    ? 'http://localhost:3000' // Локальная разработка
+                    : ''; // В production используем относительные пути
                 
                 // Получаем данные по предложениям на покупку USDT (продажа гривны)
                 const buyOrdersResponse = await fetch(`${proxyUrl}/api/okx/buy-orders`);

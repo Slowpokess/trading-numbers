@@ -2,8 +2,14 @@
 const express = require('express');
 const cors = require('cors');
 const axios = require('axios');
+const path = require('path');
 const app = express();
 const PORT = process.env.PORT || 3000;
+
+// Для обслуживания статических файлов в production окружении
+if (process.env.NODE_ENV === 'production') {
+  app.use(express.static(path.join(__dirname, '/')));
+}
 
 // Разрешаем CORS для всех источников (в продакшн лучше указать конкретный домен)
 app.use(cors());
@@ -273,6 +279,22 @@ app.get('/api/okx/sell-orders', async (req, res) => {
 // Тестовый маршрут для проверки работы сервера
 app.get('/api/test', (req, res) => {
   res.json({ status: 'ok', message: 'Прокси-сервер работает' });
+});
+
+// Корневой маршрут для сервера в Vercel
+app.get('/', (req, res) => {
+  if (process.env.NODE_ENV === 'production') {
+    res.sendFile(path.join(__dirname, '/index.html'));
+  } else {
+    res.send('Сервер запущен. Откройте index.html в браузере для использования приложения.');
+  }
+});
+
+// Для обработки любых других маршрутов в production
+app.get('*', (req, res) => {
+  if (process.env.NODE_ENV === 'production' && !req.path.startsWith('/api/')) {
+    res.sendFile(path.join(__dirname, '/index.html'));
+  }
 });
 
 app.listen(PORT, () => {

@@ -1,11 +1,16 @@
 {
-  "name": "okx-numbers",
+  "name": "trading-numbers",
   "version": "1.0.0",
   "description": "Калькулятор прибыли от маркетмейкинга на P2P OKX",
   "main": "server.js",
   "scripts": {
     "start": "node server.js",
+    "dev": "node server.js",
+    "build": "echo 'Build completed'",
     "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "engines": {
+    "node": ">=14.x"
   },
   "keywords": [
     "OKX",
