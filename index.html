@@ -13,6 +13,7 @@
             --card-bg: #ffffff;
             --text-color: #333333;
             --border-color: #e0e0e0;
+            --light-text: #5e5e5e;
         }
 
         body {
@@ -22,6 +23,13 @@
             padding: 20px;
             color: var(--text-color);
             line-height: 1.6;
+            overflow-x: hidden; /* Предотвращаем горизонтальную прокрутку на уровне страницы */
+            width: 100%;
+            box-sizing: border-box;
+        }
+
+        *, *:before, *:after {
+            box-sizing: border-box; /* Применяем box-sizing ко всем элементам */
         }
 
         .container {
@@ -30,6 +38,8 @@
             display: flex;
             flex-wrap: wrap;
             gap: 20px;
+            width: 100%;
+            overflow-x: hidden; /* Предотвращаем горизонтальную прокрутку */
         }
 
         .header {
@@ -44,8 +54,9 @@
         }
 
         .header p {
-            color: #666;
+            color: #555; /* Улучшение контраста */
             font-size: 1.1em;
+            font-weight: 500; /* Немного больше жирности для лучшей читаемости */
         }
 
         .card {
@@ -87,15 +98,23 @@
             font-weight: 600;
         }
 
-        input[type="number"] {
+        input[type="number"],
+        input[type="text"],
+        input[type="datetime-local"],
+        select {
             width: 100%;
             padding: 10px;
             border: 1px solid var(--border-color);
             border-radius: 5px;
             font-size: 16px;
+            background-color: var(--card-bg);
+            color: var(--text-color);
         }
 
-        input[type="number"]:focus {
+        input[type="number"]:focus,
+        input[type="text"]:focus,
+        input[type="datetime-local"]:focus,
+        select:focus {
             border-color: var(--primary-color);
             outline: none;
             box-shadow: 0 0 0 2px rgba(0, 102, 204, 0.2);
@@ -141,7 +160,8 @@
 
         .small-text {
             font-size: 14px;
-            color: #666;
+            color: #555; /* Улучшение контраста */
+            font-weight: 500; /* Немного больше жирности для лучшей читаемости */
         }
 
         .market-rates {
@@ -192,9 +212,10 @@
 
         .update-time {
             font-size: 14px;
-            color: #666;
+            color: #555; /* Улучшение контраста */
             text-align: right;
             margin-top: 10px;
+            font-weight: 500; /* Немного больше жирности для лучшей читаемости */
         }
         
         .loading {
@@ -255,6 +276,493 @@
             border-left: 4px solid #e53935;
             display: none;
         }
+        
+        /* Стили для вкладок */
+        .tab-navigation {
+            display: flex;
+            margin-bottom: 20px;
+            gap: 10px;
+            justify-content: center;
+        }
+        
+        .tab-button {
+            padding: 10px 20px;
+            background-color: #f0f0f0;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: all 0.3s;
+            color: var(--text-color);
+        }
+        
+        .tab-button.active {
+            background-color: var(--primary-color);
+            color: white;
+        }
+        
+        .tab-content {
+            display: none;
+            width: 100%;
+            max-width: 100%;
+            overflow-x: hidden;
+        }
+        
+        .tab-content.active {
+            display: block;
+        }
+        
+        /* Стили для раздела транзакций */
+        .transactions-section {
+            width: 100%;
+            margin-top: 20px;
+            overflow-x: hidden; /* Предотвращаем горизонтальную прокрутку */
+            max-width: 100%; /* Ограничиваем максимальную ширину */
+        }
+        
+        /* Обертка для таблицы с горизонтальной прокруткой */
+        .mobile-scroll-wrapper {
+            width: 100%;
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
+            margin-bottom: 20px;
+            max-width: 100%; /* Ограничиваем максимальную ширину */
+        }
+        
+        /* Фиксируем ширину таблицы */
+        .transactions-table {
+            width: 100%;
+            table-layout: fixed; /* Фиксированная ширина колонок */
+            border-collapse: collapse;
+        }
+        
+        .transaction-form {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+        
+        .transactions-table {
+            width: 100%;
+            margin-top: 20px;
+        }
+        
+        .transactions-table th {
+            background-color: var(--primary-color);
+            color: white;
+            padding: 10px;
+            text-align: left;
+            word-wrap: break-word; /* Перенос слов */
+            overflow: hidden;      /* Скрываем выходящее за пределы содержимое */
+            text-overflow: ellipsis; /* Добавляем многоточие для обрезанного текста */
+        }
+        
+        .transactions-table td {
+            padding: 8px;
+            border-bottom: 1px solid var(--border-color);
+            word-wrap: break-word; /* Перенос слов */
+            overflow: hidden;      /* Скрываем выходящее за пределы содержимое */
+            text-overflow: ellipsis; /* Добавляем многоточие для обрезанного текста */
+            max-width: 0;          /* Заставляет работать text-overflow в комбинации с table-layout: fixed */
+        }
+        
+        /* Устанавливаем ширины для колонок */
+        .transactions-table th:nth-child(1),
+        .transactions-table td:nth-child(1) {
+            width: 18%; /* Дата */
+        }
+        
+        .transactions-table th:nth-child(2),
+        .transactions-table td:nth-child(2) {
+            width: 10%; /* Тип */
+        }
+        
+        .transactions-table th:nth-child(3),
+        .transactions-table td:nth-child(3),
+        .transactions-table th:nth-child(4),
+        .transactions-table td:nth-child(4),
+        .transactions-table th:nth-child(5),
+        .transactions-table td:nth-child(5) {
+            width: 12%; /* Суммы и курс */
+        }
+        
+        .transactions-table th:nth-child(6),
+        .transactions-table td:nth-child(6) {
+            width: 22%; /* Примечания */
+        }
+        
+        .transactions-table th:nth-child(7),
+        .transactions-table td:nth-child(7) {
+            width: 14%; /* Действия */
+        }
+        
+        .transaction-type-buy {
+            color: var(--accent-color);
+            font-weight: bold;
+        }
+        
+        .transaction-type-sell {
+            color: #e53935;
+            font-weight: bold;
+        }
+        
+        .delete-transaction {
+            background-color: #e53935;
+            color: white;
+            padding: 5px 8px;
+            border: none;
+            border-radius: 3px;
+            cursor: pointer;
+            font-size: 0.9em;
+            width: auto;
+            max-width: 100%;
+            white-space: nowrap;
+            display: inline-block;
+        }
+        
+        .delete-transaction:hover {
+            background-color: #c62828;
+        }
+        
+        /* Дополнительные стили для колонок таблицы */
+        .transactions-table th,
+        .transactions-table td {
+            white-space: normal; /* Разрешаем перенос текста внутри ячеек */
+        }
+        
+        .analytics-container {
+            margin-top: 30px;
+        }
+        
+        .analytics-card {
+            margin-bottom: 20px;
+            padding: 15px;
+            background-color: #f8f9fa;
+            border-radius: 5px;
+            border-left: 4px solid var(--primary-color);
+        }
+        
+        .chart-container {
+            height: 300px;
+            margin-top: 20px;
+        }
+        
+        .export-import-container {
+            display: flex;
+            gap: 10px;
+            margin-top: 20px;
+        }
+
+        /* Стили для информации о балансе */
+        .balance-info-card {
+            background-color: #eaf4ff;
+            border-radius: 8px;
+            padding: 15px;
+            margin-bottom: 20px;
+            border-left: 4px solid var(--primary-color);
+            width: 100%;
+            max-width: 100%;
+            box-sizing: border-box;
+            overflow: hidden; /* Предотвращаем переполнение */
+        }
+
+        .balance-header {
+            font-weight: 600;
+            color: var(--secondary-color);
+            margin-bottom: 15px;
+            font-size: 1.1em;
+        }
+
+        .balance-form {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 10px;
+            margin-bottom: 15px;
+            width: 100%;
+        }
+
+        #update-starting-capital {
+            width: 100%;
+            max-width: 100%;
+            margin-bottom: 10px;
+        }
+
+        .current-balance-info {
+            margin-top: 20px;
+            padding-top: 15px;
+            border-top: 1px solid var(--border-color);
+            width: 100%;
+        }
+
+        .balance-item {
+            margin-bottom: 10px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap; /* Разрешаем перенос на узких экранах */
+            width: 100%;
+        }
+
+        .balance-label {
+            font-weight: 500;
+            color: var(--secondary-color);
+            flex: 1;
+            min-width: 180px;
+            padding-right: 10px;
+        }
+
+        .balance-value {
+            font-weight: 700;
+            font-size: 1.1em;
+            color: var(--accent-color);
+            text-align: right;
+        }
+
+        #total-profit-loss.positive {
+            color: var(--accent-color);
+        }
+
+        #total-profit-loss.negative {
+            color: #e53935;
+        }
+        
+        /* Стили для анализа рынка */
+        .market-analysis {
+            margin-top: 1.25rem;
+            padding: 1rem;
+            background-color: #eaf4ff;
+            border-radius: 0.5rem;
+            border-left: 0.25rem solid var(--accent-color);
+        }
+        
+        .market-analysis h3 {
+            color: var(--primary-color);
+            margin-top: 0;
+            margin-bottom: 1rem;
+            font-size: 1.2rem;
+        }
+        
+        .market-analysis-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1rem;
+        }
+        
+        .analysis-card {
+            background-color: white;
+            padding: 0.75rem 1rem;
+            border-radius: 0.5rem;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+        
+        .analysis-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+        }
+        
+        .analysis-title {
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            color: var(--secondary-color);
+            font-size: 0.95rem;
+            display: flex;
+            align-items: center;
+        }
+        
+        .analysis-title .tooltip {
+            margin-left: 0.5rem;
+            position: relative;
+            cursor: help;
+        }
+        
+        .tooltip-icon {
+            display: inline-block;
+            width: 1rem;
+            height: 1rem;
+            border-radius: 50%;
+            background-color: var(--primary-color);
+            color: white;
+            text-align: center;
+            line-height: 1rem;
+            font-size: 0.75rem;
+        }
+        
+        .tooltip-text {
+            visibility: hidden;
+            width: 200px;
+            background-color: #333;
+            color: #fff;
+            text-align: center;
+            border-radius: 0.5rem;
+            padding: 0.5rem;
+            position: absolute;
+            z-index: 1;
+            bottom: 125%;
+            left: 50%;
+            margin-left: -100px;
+            opacity: 0;
+            transition: opacity 0.3s;
+            font-size: 0.8rem;
+            font-weight: normal;
+        }
+        
+        .tooltip:hover .tooltip-text {
+            visibility: visible;
+            opacity: 1;
+        }
+        
+        .analysis-value {
+            font-size: 1.125rem;
+            font-weight: 700;
+            color: var(--accent-color);
+            margin-bottom: 0.5rem;
+        }
+        
+        .analysis-value.positive {
+            color: var(--accent-color);
+        }
+        
+        .analysis-value.negative {
+            color: #e53935;
+        }
+        
+        .analysis-info {
+            font-size: 0.875rem;
+            color: #555; /* Улучшение контраста */
+            font-weight: 500; /* Немного больше жирности для лучшей читаемости */
+        }
+        
+        /* Адаптивные стили */
+        @media (max-width: 768px) {
+            .container {
+                padding: 0.625rem;
+            }
+            
+            .card {
+                min-width: 100%;
+                padding: 1rem;
+                margin-bottom: 1rem;
+            }
+            
+            .market-analysis-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .market-rates {
+                flex-direction: column;
+            }
+            
+            .rate-card {
+                width: 100%;
+                margin-bottom: 1rem;
+            }
+            
+            .transaction-form {
+                grid-template-columns: 1fr;
+            }
+            
+            .tab-navigation {
+                flex-wrap: wrap;
+            }
+            
+            .tab-button {
+                flex: 1 0 auto;
+                min-width: 120px;
+                margin-bottom: 0.5rem;
+            }
+            
+            /* Оптимизированные таблицы для мобильных устройств */
+            .mobile-scroll-wrapper {
+                width: 100%;
+                overflow-x: auto;
+                -webkit-overflow-scrolling: touch;
+            }
+            
+            /* Скрытие неприоритетных столбцов на мобильных устройствах */
+            .mobile-hidden {
+                display: none;
+            }
+        }
+        
+        /* Стили для темного режима */
+        @media (prefers-color-scheme: dark) {
+            :root {
+                --primary-color: #4d94ff;
+                --secondary-color: #81b0ff;
+                --accent-color: #00cc73;
+                --background-color: #121212;
+                --card-bg: #1e1e1e;
+                --text-color: #ffffff; /* Увеличиваем контраст с белым цветом */
+                --border-color: #444444;
+                --light-text: #b0b0b0; /* Светлый текст с лучшим контрастом */
+            }
+            
+            body {
+                background-color: var(--background-color);
+                color: var(--text-color);
+            }
+            
+            .card, .analysis-card {
+                background-color: var(--card-bg);
+                box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+            }
+            
+            .result-group, .analytics-card {
+                background-color: #252525;
+            }
+
+            .small-text, .update-time, .analysis-info {
+                color: var(--light-text);
+            }
+
+            .header p {
+                color: var(--light-text);
+            }
+            
+            input, select {
+                background-color: #2a2a2a;
+                color: var(--text-color);
+                border-color: #555;
+            }
+            
+            input:focus, select:focus {
+                border-color: var(--primary-color);
+                box-shadow: 0 0 0 2px rgba(77, 148, 255, 0.2);
+            }
+            
+            th {
+                background-color: #2a2a2a;
+            }
+            
+            td {
+                border-bottom-color: #444;
+            }
+
+            .tab-button {
+                background-color: #333;
+                color: var(--text-color);
+            }
+
+            .tab-button.active {
+                background-color: var(--primary-color);
+                color: white;
+            }
+
+            .scenario {
+                background-color: #333;
+                color: var(--text-color);
+            }
+
+            .rate-card, .result-group, .balance-info-card {
+                background-color: #252525;
+                border-left-color: var(--primary-color);
+            }
+            
+            #update-starting-capital {
+                background-color: var(--primary-color);
+            }
+        }
     </style>
 </head>
 <body>
@@ -262,6 +770,10 @@
         <div class="header">
             <h1>Калькулятор маркетмейкинга P2P OKX</h1>
             <p>Рассчитайте прибыль от P2P маркетмейкинга на бирже OKX для пары UAH/USDT</p>
+            <div class="tab-navigation">
+                <button class="tab-button active" data-tab="calculator">Калькулятор</button>
+                <button class="tab-button" data-tab="transactions">Мои транзакции</button>
+            </div>
             <div id="auto-update-control" class="auto-update-control">
                 <label for="auto-update-toggle">
                     <input type="checkbox" id="auto-update-toggle">
@@ -278,150 +790,325 @@
             </div>
         </div>
         
-        <div class="card inputs-card">
-            <h2>Параметры расчета</h2>
-            <div class="input-group">
-                <label for="capital">Капитал (USDT)</label>
-                <input type="number" id="capital" step="100" min="0" value="1000">
-            </div>
-            <div class="input-group">
-                <label for="spread">Спред (%)</label>
-                <input type="number" id="spread" step="0.01" min="0" value="1.0">
-            </div>
-            <div class="input-group">
-                <label for="rate">Средний курс (UAH/USDT)</label>
-                <input type="number" id="rate" step="0.01" min="0" value="38.5">
-            </div>
-            <div class="input-group">
-                <label for="utilization">Загрузка капитала (%)</label>
-                <input type="number" id="utilization" step="1" min="0" max="100" value="80">
-            </div>
-            <div class="input-group">
-                <label for="turnover">Количество оборотов в день</label>
-                <input type="number" id="turnover" step="0.1" min="0" value="3">
-            </div>
-            
-            <button id="calculate">Рассчитать прибыль</button>
-            
-            <div class="scenario-container">
-                <div class="result-label">Предустановленные сценарии:</div>
-                <div class="scenarios">
-                    <div class="scenario" data-capital="1000" data-spread="0.5" data-utilization="70" data-turnover="2">Малый капитал</div>
-                    <div class="scenario" data-capital="5000" data-spread="1" data-utilization="80" data-turnover="3">Средний капитал</div>
-                    <div class="scenario" data-capital="10000" data-spread="1.5" data-utilization="90" data-turnover="4">Крупный капитал</div>
+        <!-- Вкладка калькулятора -->
+        <div id="calculator-tab" class="tab-content active">
+            <div class="card inputs-card">
+                <h2>Параметры расчета</h2>
+                <div class="input-group">
+                    <label for="capital">Капитал (USDT)</label>
+                    <input type="number" id="capital" step="100" min="0" value="1000">
+                </div>
+                <div class="input-group">
+                    <label for="spread">Спред (%)</label>
+                    <input type="number" id="spread" step="0.01" min="0" value="1.0">
+                </div>
+                <div class="input-group">
+                    <label for="rate">Средний курс (UAH/USDT)</label>
+                    <input type="number" id="rate" step="0.01" min="0" value="38.5">
+                </div>
+                <div class="input-group">
+                    <label for="utilization">Загрузка капитала (%)</label>
+                    <input type="number" id="utilization" step="1" min="0" max="100" value="80">
+                </div>
+                <div class="input-group">
+                    <label for="turnover">Количество оборотов в день</label>
+                    <input type="number" id="turnover" step="0.1" min="0" value="3">
+                </div>
+                
+                <button id="calculate">Рассчитать прибыль</button>
+                
+                <div class="scenario-container">
+                    <div class="result-label">Предустановленные сценарии:</div>
+                    <div class="scenarios">
+                        <div class="scenario" data-capital="1000" data-spread="0.5" data-utilization="70" data-turnover="2">Малый капитал</div>
+                        <div class="scenario" data-capital="5000" data-spread="1" data-utilization="80" data-turnover="3">Средний капитал</div>
+                        <div class="scenario" data-capital="10000" data-spread="1.5" data-utilization="90" data-turnover="4">Крупный капитал</div>
+                    </div>
+                </div>
+                
+                <div id="error-message" class="error-message">
+                    Ошибка при получении данных. Убедитесь, что прокси-сервер запущен.
                 </div>
             </div>
             
-            <div id="error-message" class="error-message">
-                Ошибка при получении данных. Убедитесь, что прокси-сервер запущен.
-            </div>
-        </div>
-        
-        <div class="card results-card">
-            <h2>Результаты расчета</h2>
-            <div class="result-group">
-                <div class="result-label">Дневная прибыль:</div>
-                <div class="result-value" id="daily-profit">0 USDT</div>
-                <div class="small-text" id="daily-profit-uah">0 UAH</div>
-            </div>
-            <div class="result-group">
-                <div class="result-label">Месячная прибыль (30 дней):</div>
-                <div class="result-value" id="monthly-profit">0 USDT</div>
-                <div class="small-text" id="monthly-profit-uah">0 UAH</div>
-            </div>
-            <div class="result-group">
-                <div class="result-label">Годовая прибыль:</div>
-                <div class="result-value" id="yearly-profit">0 USDT</div>
-                <div class="small-text" id="yearly-profit-uah">0 UAH</div>
-            </div>
-            <div class="result-group">
-                <div class="result-label">Годовая доходность:</div>
-                <div class="result-value" id="yearly-percentage">0%</div>
-            </div>
-            <div class="result-group">
-                <div class="result-label">Рабочий капитал:</div>
-                <div class="result-value" id="working-capital">0 USDT</div>
-            </div>
-            <div class="result-group">
-                <div class="result-label">Фактический спред:</div>
-                <div class="result-value" id="actual-spread">0 UAH</div>
-                <div class="small-text" id="spread-percentage">0%</div>
-            </div>
-            <div class="suggested-prices hidden" id="suggested-prices-container">
-                <div class="result-label">Рекомендуемые цены:</div>
-                <div class="result-value" id="buy-price">Покупка: 0 UAH</div>
-                <div class="result-value" id="sell-price">Продажа: 0 UAH</div>
-            </div>
-        </div>
-        
-        <div class="card market-card">
-            <h2>Рыночные данные OKX P2P <span id="loading-spinner" class="loading"></span></h2>
-            <button id="update-rates">Обновить курсы</button>
-            
-            <div class="recommendation-box" id="recommendation-box">
-                <div class="rec-title">Рекомендации для маркетмейкинга:</div>
-                <div class="rec-details">
-                    <div class="rec-item">
-                        <div class="rec-label">Покупать по:</div>
-                        <div class="rec-value rec-buy" id="rec-buy-price">0 UAH</div>
-                        <div class="rec-info" id="rec-buy-info">Лучшая цена покупки минус наценка</div>
-                    </div>
-                    <div class="rec-item">
-                        <div class="rec-label">Продавать по:</div>
-                        <div class="rec-value rec-sell" id="rec-sell-price">0 UAH</div>
-                        <div class="rec-info" id="rec-sell-info">Лучшая цена продажи плюс наценка</div>
-                    </div>
-                    <div class="rec-item">
-                        <div class="rec-label">Ожидаемый спред:</div>
-                        <div class="rec-value" id="rec-spread">0%</div>
-                        <div class="rec-info" id="rec-profit">Потенциальная прибыль: 0 USDT</div>
-                    </div>
+            <div class="card results-card">
+                <h2>Результаты расчета</h2>
+                <div class="result-group">
+                    <div class="result-label">Дневная прибыль:</div>
+                    <div class="result-value" id="daily-profit">0 USDT</div>
+                    <div class="small-text" id="daily-profit-uah">0 UAH</div>
+                </div>
+                <div class="result-group">
+                    <div class="result-label">Месячная прибыль (30 дней):</div>
+                    <div class="result-value" id="monthly-profit">0 USDT</div>
+                    <div class="small-text" id="monthly-profit-uah">0 UAH</div>
+                </div>
+                <div class="result-group">
+                    <div class="result-label">Годовая прибыль:</div>
+                    <div class="result-value" id="yearly-profit">0 USDT</div>
+                    <div class="small-text" id="yearly-profit-uah">0 UAH</div>
+                </div>
+                <div class="result-group">
+                    <div class="result-label">Годовая доходность:</div>
+                    <div class="result-value" id="yearly-percentage">0%</div>
+                </div>
+                <div class="result-group">
+                    <div class="result-label">Рабочий капитал:</div>
+                    <div class="result-value" id="working-capital">0 USDT</div>
+                </div>
+                <div class="result-group">
+                    <div class="result-label">Фактический спред:</div>
+                    <div class="result-value" id="actual-spread">0 UAH</div>
+                    <div class="small-text" id="spread-percentage">0%</div>
+                </div>
+                <div class="suggested-prices hidden" id="suggested-prices-container">
+                    <div class="result-label">Рекомендуемые цены:</div>
+                    <div class="result-value" id="buy-price">Покупка: 0 UAH</div>
+                    <div class="result-value" id="sell-price">Продажа: 0 UAH</div>
                 </div>
             </div>
             
-            <div class="market-rates">
-                <div class="rate-card">
-                    <div class="rate-header">Предложения на покупку USDT (продажа UAH)</div>
-                    <table id="buy-orders">
+            <div class="card market-card">
+                <h2>Рыночные данные OKX P2P <span id="loading-spinner" class="loading"></span></h2>
+                <button id="update-rates">Обновить курсы</button>
+                
+                <div class="recommendation-box" id="recommendation-box">
+                    <div class="rec-title">Рекомендации для маркетмейкинга:</div>
+                    <div class="rec-details">
+                        <div class="rec-item">
+                            <div class="rec-label">Покупать по:</div>
+                            <div class="rec-value rec-buy" id="rec-buy-price">0 UAH</div>
+                            <div class="rec-info" id="rec-buy-info">Лучшая цена покупки минус наценка</div>
+                        </div>
+                        <div class="rec-item">
+                            <div class="rec-label">Продавать по:</div>
+                            <div class="rec-value rec-sell" id="rec-sell-price">0 UAH</div>
+                            <div class="rec-info" id="rec-sell-info">Лучшая цена продажи плюс наценка</div>
+                        </div>
+                        <div class="rec-item">
+                            <div class="rec-label">Ожидаемый спред:</div>
+                            <div class="rec-value" id="rec-spread">0%</div>
+                            <div class="rec-info" id="rec-profit">Потенциальная прибыль: 0 USDT</div>
+                        </div>
+                    </div>
+                    
+                    <div class="market-analysis">
+                        <h3>Анализ рынка</h3>
+                        <div class="market-analysis-grid">
+                            <div class="analysis-card">
+                                <div class="analysis-title">
+                                    Реальный спред маркетмейкеров:
+                                    <div class="tooltip">
+                                        <span class="tooltip-icon">?</span>
+                                        <span class="tooltip-text">Разница между лучшей ценой покупки и продажи на рынке. Характеризует текущую волатильность.</span>
+                                    </div>
+                                </div>
+                                <div class="analysis-value" id="market-makers-spread">0%</div>
+                                <div class="analysis-info" id="market-makers-spread-info">Средний спред между лучшими ценами</div>
+                            </div>
+                            <div class="analysis-card">
+                                <div class="analysis-title">
+                                    Лучшая цена на покупку USDT:
+                                    <div class="tooltip">
+                                        <span class="tooltip-icon">?</span>
+                                        <span class="tooltip-text">Самая низкая цена USDT на рынке. Используйте эту информацию для установки цены продажи.</span>
+                                    </div>
+                                </div>
+                                <div class="analysis-value positive" id="best-buy-price">0 UAH</div>
+                                <div class="analysis-info">Минимальная цена + <span id="avg-buy-volume">0</span> USDT доступно</div>
+                            </div>
+                            <div class="analysis-card">
+                                <div class="analysis-title">
+                                    Лучшая цена на продажу USDT:
+                                    <div class="tooltip">
+                                        <span class="tooltip-icon">?</span>
+                                        <span class="tooltip-text">Самая высокая цена USDT на рынке. Используйте эту информацию для установки цены покупки.</span>
+                                    </div>
+                                </div>
+                                <div class="analysis-value negative" id="best-sell-price">0 UAH</div>
+                                <div class="analysis-info">Максимальная цена + <span id="avg-sell-volume">0</span> USDT доступно</div>
+                            </div>
+                            <div class="analysis-card">
+                                <div class="analysis-title">
+                                    Прибыль с оборота капитала:
+                                    <div class="tooltip">
+                                        <span class="tooltip-icon">?</span>
+                                        <span class="tooltip-text">Расчетная прибыль при единоразовом обороте указанной суммы USDT с использованием текущего рыночного спреда.</span>
+                                    </div>
+                                </div>
+                                <div class="analysis-value" id="capital-turnover-profit">0 USDT</div>
+                                <div class="analysis-info">При обороте в <span id="capital-amount">1000</span> USDT</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="market-rates">
+                    <div class="rate-card">
+                        <div class="rate-header">Предложения на покупку USDT (продажа UAH)</div>
+                        <div class="mobile-scroll-wrapper">
+                            <table id="buy-orders">
+                                <thead>
+                                    <tr>
+                                        <th>Цена (UAH)</th>
+                                        <th>Доступно (USDT)</th>
+                                        <th class="mobile-hidden">Платежные методы</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td colspan="3">Загрузка данных...</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                    <div class="rate-card">
+                        <div class="rate-header">Предложения на продажу USDT (покупка UAH)</div>
+                        <div class="mobile-scroll-wrapper">
+                            <table id="sell-orders">
+                                <thead>
+                                    <tr>
+                                        <th>Цена (UAH)</th>
+                                        <th>Доступно (USDT)</th>
+                                        <th class="mobile-hidden">Платежные методы</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td colspan="3">Загрузка данных...</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+                <div class="update-time" id="update-time">
+                    Последнее обновление: никогда
+                </div>
+            </div>
+        </div>
+        
+        <!-- Вкладка транзакций -->
+        <div id="transactions-tab" class="tab-content">
+            <div class="card transactions-section">
+                <h2>Учет транзакций</h2>
+                
+                <div class="balance-info-card">
+                    <div class="balance-header">Информация о балансе</div>
+                    <div class="balance-form">
+                        <div class="input-group">
+                            <label for="starting-capital-usdt">Стартовый капитал (USDT)</label>
+                            <input type="number" id="starting-capital-usdt" step="1" min="0" value="0">
+                        </div>
+                        <div class="input-group">
+                            <label for="starting-capital-uah">Стартовый капитал (UAH)</label>
+                            <input type="number" id="starting-capital-uah" step="1" min="0" value="0">
+                        </div>
+                    </div>
+                    <button id="update-starting-capital">Обновить стартовый капитал</button>
+                    
+                    <div class="current-balance-info">
+                        <div class="balance-item">
+                            <div class="balance-label">Текущий баланс USDT:</div>
+                            <div class="balance-value" id="current-balance-usdt">0 USDT</div>
+                        </div>
+                        <div class="balance-item">
+                            <div class="balance-label">Текущий баланс UAH:</div>
+                            <div class="balance-value" id="current-balance-uah">0 UAH</div>
+                        </div>
+                        <div class="balance-item">
+                            <div class="balance-label">Общая прибыль/убыток:</div>
+                            <div class="balance-value" id="total-profit-loss">0 USDT</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <h3>Добавить новую транзакцию</h3>
+                <div class="transaction-form">
+                    <div class="input-group">
+                        <label for="transaction-type">Тип транзакции</label>
+                        <select id="transaction-type">
+                            <option value="buy">Покупка USDT</option>
+                            <option value="sell">Продажа USDT</option>
+                        </select>
+                    </div>
+                    <div class="input-group">
+                        <label for="transaction-amount">Сумма (USDT)</label>
+                        <input type="number" id="transaction-amount" step="1" min="0" value="100">
+                    </div>
+                    <div class="input-group">
+                        <label for="transaction-rate">Курс (UAH/USDT)</label>
+                        <input type="number" id="transaction-rate" step="0.01" min="0" value="38.5">
+                    </div>
+                    <div class="input-group">
+                        <label for="transaction-date">Дата</label>
+                        <input type="datetime-local" id="transaction-date">
+                    </div>
+                    <div class="input-group">
+                        <label for="transaction-notes">Примечания</label>
+                        <input type="text" id="transaction-notes" placeholder="Дополнительная информация">
+                    </div>
+                </div>
+                <button id="add-transaction">Добавить транзакцию</button>
+                
+                <div class="analytics-container">
+                    <h3>Аналитика</h3>
+                    <div class="analytics-card">
+                        <div class="result-label">Общая прибыль:</div>
+                        <div class="result-value" id="total-profit">0 USDT</div>
+                        <div class="small-text" id="total-profit-uah">0 UAH</div>
+                    </div>
+                    <div class="analytics-card">
+                        <div class="result-label">Средний спред:</div>
+                        <div class="result-value" id="average-spread">0%</div>
+                    </div>
+                    <div class="analytics-card">
+                        <div class="result-label">Количество транзакций:</div>
+                        <div class="result-value" id="transaction-count">0</div>
+                    </div>
+                    <div class="chart-container">
+                        <canvas id="profit-chart"></canvas>
+                    </div>
+                </div>
+                
+                <div class="export-import-container">
+                    <button id="export-data">Экспорт данных</button>
+                    <button id="import-data">Импорт данных</button>
+                    <input type="file" id="import-file" accept=".json" style="display: none;">
+                </div>
+                
+                <h3>История транзакций</h3>
+                <div class="mobile-scroll-wrapper">
+                    <table class="transactions-table" id="transactions-table">
                         <thead>
                             <tr>
-                                <th>Цена (UAH)</th>
-                                <th>Доступно (USDT)</th>
-                                <th>Платежные методы</th>
+                                <th>Дата</th>
+                                <th>Тип</th>
+                                <th>Сумма (USDT)</th>
+                                <th>Курс (UAH)</th>
+                                <th>Сумма (UAH)</th>
+                                <th>Примечания</th>
+                                <th>Действия</th>
                             </tr>
                         </thead>
                         <tbody>
                             <tr>
-                                <td colspan="3">Загрузка данных...</td>
+                                <td colspan="7">Нет данных</td>
                             </tr>
                         </tbody>
                     </table>
                 </div>
-                <div class="rate-card">
-                    <div class="rate-header">Предложения на продажу USDT (покупка UAH)</div>
-                    <table id="sell-orders">
-                        <thead>
-                            <tr>
-                                <th>Цена (UAH)</th>
-                                <th>Доступно (USDT)</th>
-                                <th>Платежные методы</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr>
-                                <td colspan="3">Загрузка данных...</td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-            <div class="update-time" id="update-time">
-                Последнее обновление: никогда
             </div>
         </div>
     </div>
 
     <script>
+        // Подключение библиотеки для графиков
+        const chartScript = document.createElement('script');
+        chartScript.src = 'https://cdn.jsdelivr.net/npm/chart.js';
+        document.head.appendChild(chartScript);
+        
         // Глобальные переменные для хранения курсов
         let marketData = {
             buyOrders: [],
@@ -429,6 +1116,18 @@
             lastUpdate: null,
             bestBuyPrice: 0,
             bestSellPrice: 0
+        };
+        
+        // Глобальная переменная для хранения транзакций
+        let transactions = [];
+        
+        // Глобальные переменные для отслеживания баланса
+        let balanceData = {
+            startingCapitalUSDT: 0,     // Стартовый капитал в USDT
+            startingCapitalUAH: 0,      // Стартовый капитал в UAH
+            currentUSDT: 0,             // Текущий баланс USDT
+            currentUAH: 0,              // Текущий баланс UAH
+            lastUpdateTime: null        // Время последнего пересчета
         };
         
         // Переменные для автоматического обновления
@@ -578,8 +1277,51 @@
                 document.getElementById('spread').value = formatNumber(recommendedSpread);
             }
             
+            // Анализ рыночных данных маркетмейкеров
+            generateMarketAnalysis();
+            
             // Пересчитываем общую прибыль
             calculateProfit();
+        }
+        
+        // Функция для анализа рынка и спреда маркетмейкеров
+        function generateMarketAnalysis() {
+            if (marketData.buyOrders.length === 0 || marketData.sellOrders.length === 0) {
+                return;
+            }
+            
+            // Находим лучшие цены и объемы
+            const buyOrders = [...marketData.buyOrders].sort((a, b) => a.price - b.price);
+            const sellOrders = [...marketData.sellOrders].sort((a, b) => b.price - a.price);
+            
+            // Находим минимальную цену покупки USDT (продажа UAH)
+            const minBuyPrice = buyOrders[0].price;
+            const minBuyVolume = buyOrders[0].available;
+            
+            // Находим максимальную цену продажи USDT (покупка UAH)
+            const maxSellPrice = sellOrders[0].price;
+            const maxSellVolume = sellOrders[0].available;
+            
+            // Вычисляем реальный спред маркетмейкеров
+            const marketMakersSpread = ((maxSellPrice - minBuyPrice) / minBuyPrice) * 100;
+            
+            // Вычисляем потенциальную прибыль с оборота капитала при реальном спреде
+            const capital = parseFloat(document.getElementById('capital').value);
+            const turnoverProfit = Math.min(capital, Math.min(minBuyVolume, maxSellVolume)) * (marketMakersSpread / 100);
+            
+            // Обновляем значения на странице
+            document.getElementById('market-makers-spread').textContent = formatNumber(marketMakersSpread) + '%';
+            document.getElementById('market-makers-spread-info').textContent = 
+                'Спред между ' + formatNumber(minBuyPrice) + ' и ' + formatNumber(maxSellPrice) + ' UAH';
+            
+            document.getElementById('best-buy-price').textContent = formatNumber(minBuyPrice) + ' UAH';
+            document.getElementById('avg-buy-volume').textContent = formatNumber(minBuyVolume);
+            
+            document.getElementById('best-sell-price').textContent = formatNumber(maxSellPrice) + ' UAH';
+            document.getElementById('avg-sell-volume').textContent = formatNumber(maxSellVolume);
+            
+            document.getElementById('capital-turnover-profit').textContent = formatNumber(turnoverProfit) + ' USDT';
+            document.getElementById('capital-amount').textContent = formatNumber(Math.min(capital, Math.min(minBuyVolume, maxSellVolume)));
         }
         
         // Функция для получения данных с API OKX через прокси-сервер
@@ -864,27 +1606,670 @@
             generateRecommendations();
         }
         
-        // Обработчики событий при загрузке страницы
-        document.addEventListener('DOMContentLoaded', function() {
-            // Кнопка расчета
-            document.getElementById('calculate').addEventListener('click', calculateProfit);
+        // Функция для сохранения транзакций в localStorage
+        function saveTransactions() {
+            localStorage.setItem('okx_transactions', JSON.stringify(transactions));
+            updateTransactionAnalytics();
+        }
+        
+        // Функция для загрузки транзакций из localStorage
+        function loadTransactions() {
+            const savedTransactions = localStorage.getItem('okx_transactions');
+            if (savedTransactions) {
+                transactions = JSON.parse(savedTransactions);
+                updateTransactionTable();
+                updateTransactionAnalytics();
+            }
+        }
+        
+        // Функция для добавления новой транзакции
+        function addTransaction() {
+            const type = document.getElementById('transaction-type').value;
+            const amount = parseFloat(document.getElementById('transaction-amount').value);
+            const rate = parseFloat(document.getElementById('transaction-rate').value);
+            const dateInput = document.getElementById('transaction-date').value;
+            const notes = document.getElementById('transaction-notes').value;
             
-            // Кнопка обновления курсов
-            document.getElementById('update-rates').addEventListener('click', fetchOKXData);
+            if (!amount || !rate) {
+                alert('Необходимо указать сумму и курс!');
+                return;
+            }
             
-            // Обработчики для сценариев
-            document.querySelectorAll('.scenario').forEach(scenario => {
-                scenario.addEventListener('click', applyScenario);
+            const date = dateInput ? new Date(dateInput) : new Date();
+            
+            // Проверка имеет ли пользователь достаточно средств для этой транзакции
+            const {currentUSDT, currentUAH} = updateBalance();
+            const uahAmount = amount * rate;
+            
+            // Проверка баланса для продажи USDT или покупки USDT
+            if (type === 'sell' && amount > currentUSDT) {
+                if (!confirm(`Внимание! У вас недостаточно USDT для продажи (${formatNumber(currentUSDT)} USDT доступно). Продолжить?`)) {
+                    return;
+                }
+            } else if (type === 'buy' && uahAmount > currentUAH) {
+                if (!confirm(`Внимание! У вас недостаточно UAH для покупки (${formatNumber(currentUAH)} UAH доступно). Продолжить?`)) {
+                    return;
+                }
+            }
+            
+            const newTransaction = {
+                id: Date.now(), // Уникальный ID на основе времени
+                type,
+                amount,
+                rate,
+                date: date.toISOString(),
+                notes
+            };
+            
+            transactions.push(newTransaction);
+            saveTransactions();
+            updateTransactionTable();
+            
+            // Обновляем баланс и аналитику
+            updateBalance();
+            
+            // Сброс формы
+            document.getElementById('transaction-amount').value = 100;
+            document.getElementById('transaction-notes').value = '';
+        }
+        
+        // Функция для удаления транзакции
+        function deleteTransaction(id) {
+            transactions = transactions.filter(t => t.id !== id);
+            saveTransactions();
+            updateTransactionTable();
+            
+            // Обновляем баланс и аналитику
+            updateBalance();
+            updateTransactionAnalytics();
+        }
+        
+        // Функция для экспорта данных
+        function exportData() {
+            // Создаем объект, включающий и транзакции, и данные о балансе
+            const exportData = {
+                transactions: transactions,
+                balanceData: balanceData,
+                exportDate: new Date().toISOString()
+            };
+            
+            const dataStr = JSON.stringify(exportData, null, 2);
+            const dataUri = 'data:application/json;charset=utf-8,'+ encodeURIComponent(dataStr);
+            
+            const exportFileDefaultName = `okx_trading_data_${new Date().toISOString().slice(0,10)}.json`;
+            
+            const linkElement = document.createElement('a');
+            linkElement.setAttribute('href', dataUri);
+            linkElement.setAttribute('download', exportFileDefaultName);
+            linkElement.click();
+        }
+        
+        // Функция для импорта данных
+        function importData() {
+            document.getElementById('import-file').click();
+        }
+        
+        // Функция для обработки загруженного файла
+        function handleFileUpload(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+            
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                try {
+                    const data = JSON.parse(e.target.result);
+                    
+                    // Проверяем формат данных
+                    if (typeof data === 'object' && data !== null) {
+                        // Если это объект с расширенными данными (включая баланс)
+                        if (data.transactions && Array.isArray(data.transactions) && data.balanceData) {
+                            transactions = data.transactions;
+                            balanceData = data.balanceData;
+                            
+                            // Обновляем поля стартового капитала
+                            document.getElementById('starting-capital-usdt').value = balanceData.startingCapitalUSDT;
+                            document.getElementById('starting-capital-uah').value = balanceData.startingCapitalUAH;
+                            
+                        // Если это просто массив транзакций (старый формат)
+                        } else if (Array.isArray(data)) {
+                            transactions = data;
+                        } else {
+                            alert('Неверный формат файла!');
+                            return;
+                        }
+                        
+                        // Сохраняем данные
+                        saveTransactions();
+                        localStorage.setItem('okx_balance_data', JSON.stringify(balanceData));
+                        
+                        // Обновляем интерфейс
+                        updateTransactionTable();
+                        updateBalance();
+                        updateTransactionAnalytics();
+                        
+                        alert('Данные успешно импортированы!');
+                    } else {
+                        alert('Неверный формат файла!');
+                    }
+                } catch (error) {
+                    alert('Ошибка при чтении файла: ' + error.message);
+                }
+            };
+            reader.readAsText(file);
+        }
+        
+        // Функция для обновления таблицы транзакций
+        function updateTransactionTable() {
+            const tbody = document.querySelector('#transactions-table tbody');
+            
+            if (transactions.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="7">Нет данных</td></tr>';
+                return;
+            }
+            
+            tbody.innerHTML = '';
+            
+            // Сортируем транзакции по дате (новые сверху)
+            const sortedTransactions = [...transactions].sort((a, b) => new Date(b.date) - new Date(a.date));
+            
+            sortedTransactions.forEach(transaction => {
+                const tr = document.createElement('tr');
+                
+                // Форматируем дату
+                const date = new Date(transaction.date);
+                const formattedDate = date.toLocaleDateString() + ' ' + date.toLocaleTimeString();
+                
+                // Вычисляем сумму в UAH
+                const uahAmount = transaction.amount * transaction.rate;
+                
+                // Определяем класс для типа транзакции
+                const typeClass = transaction.type === 'buy' ? 'transaction-type-buy' : 'transaction-type-sell';
+                const typeText = transaction.type === 'buy' ? 'Покупка' : 'Продажа';
+                
+                // Экранируем HTML-разметку в примечаниях для предотвращения XSS
+                const notesText = transaction.notes || '';
+                const escapedNotes = notesText
+                    .replace(/&/g, '&amp;')
+                    .replace(/</g, '&lt;')
+                    .replace(/>/g, '&gt;')
+                    .replace(/"/g, '&quot;')
+                    .replace(/'/g, '&#039;');
+                
+                // Ограничиваем длину для отображения
+                let displayNotes = escapedNotes;
+                if (displayNotes.length > 25) {
+                    displayNotes = displayNotes.substring(0, 25) + '...';
+                }
+                
+                // Создаем строку с использованием DOM API вместо innerHTML
+                const tdDate = document.createElement('td');
+                tdDate.textContent = formattedDate;
+                
+                const tdType = document.createElement('td');
+                tdType.textContent = typeText;
+                tdType.className = typeClass;
+                
+                const tdAmount = document.createElement('td');
+                tdAmount.textContent = formatNumber(transaction.amount);
+                
+                const tdRate = document.createElement('td');
+                tdRate.textContent = formatNumber(transaction.rate);
+                
+                const tdUahAmount = document.createElement('td');
+                tdUahAmount.textContent = formatNumber(uahAmount);
+                
+                const tdNotes = document.createElement('td');
+                tdNotes.textContent = displayNotes;
+                tdNotes.title = notesText; // Показываем полный текст в тултипе
+                
+                const deleteButton = document.createElement('button');
+                deleteButton.textContent = 'Удалить';
+                deleteButton.className = 'delete-transaction';
+                deleteButton.dataset.id = transaction.id;
+                
+                const tdActions = document.createElement('td');
+                tdActions.appendChild(deleteButton);
+                
+                // Добавляем ячейки в строку
+                tr.appendChild(tdDate);
+                tr.appendChild(tdType);
+                tr.appendChild(tdAmount);
+                tr.appendChild(tdRate);
+                tr.appendChild(tdUahAmount);
+                tr.appendChild(tdNotes);
+                tr.appendChild(tdActions);
+                
+                tbody.appendChild(tr);
             });
             
-            // Обработчики изменения значений полей
+            // Добавляем обработчики для кнопок удаления
+            document.querySelectorAll('.delete-transaction').forEach(button => {
+                button.addEventListener('click', function() {
+                    const id = parseInt(this.getAttribute('data-id'));
+                    if (confirm('Вы уверены, что хотите удалить эту транзакцию?')) {
+                        deleteTransaction(id);
+                    }
+                });
+            });
+        }
+        
+        // Функция для обновления стартового капитала
+        function updateStartingCapital() {
+            balanceData.startingCapitalUSDT = parseFloat(document.getElementById('starting-capital-usdt').value) || 0;
+            balanceData.startingCapitalUAH = parseFloat(document.getElementById('starting-capital-uah').value) || 0;
+            balanceData.lastUpdateTime = new Date();
+            
+            // Сохраняем данные о балансе в localStorage
+            localStorage.setItem('okx_balance_data', JSON.stringify(balanceData));
+            
+            // Пересчитываем текущий баланс и прибыль
+            updateBalance();
+            
+            alert('Стартовый капитал обновлен!');
+        }
+        
+        // Функция для загрузки данных о балансе
+        function loadBalanceData() {
+            const savedBalance = localStorage.getItem('okx_balance_data');
+            if (savedBalance) {
+                balanceData = JSON.parse(savedBalance);
+                
+                // Обновляем поля формы
+                document.getElementById('starting-capital-usdt').value = balanceData.startingCapitalUSDT;
+                document.getElementById('starting-capital-uah').value = balanceData.startingCapitalUAH;
+                
+                // Пересчитываем текущий баланс
+                updateBalance();
+            }
+        }
+        
+        // Функция для расчета текущего баланса на основе транзакций
+        function updateBalance() {
+            // Инициализируем текущий баланс из стартового капитала
+            let currentUSDT = balanceData.startingCapitalUSDT;
+            let currentUAH = balanceData.startingCapitalUAH;
+            
+            // Сортируем транзакции по дате (старые в начале)
+            const sortedTransactions = [...transactions].sort((a, b) => new Date(a.date) - new Date(b.date));
+            
+            // Применяем каждую транзакцию к балансу
+            sortedTransactions.forEach(transaction => {
+                const uahAmount = transaction.amount * transaction.rate;
+                
+                if (transaction.type === 'buy') {
+                    // Покупка USDT: увеличиваем USDT, уменьшаем UAH
+                    currentUSDT += transaction.amount;
+                    currentUAH -= uahAmount;
+                } else {
+                    // Продажа USDT: уменьшаем USDT, увеличиваем UAH
+                    currentUSDT -= transaction.amount;
+                    currentUAH += uahAmount;
+                }
+            });
+            
+            // Обновляем данные о текущем балансе
+            balanceData.currentUSDT = currentUSDT;
+            balanceData.currentUAH = currentUAH;
+            
+            // Сохраняем данные о балансе
+            localStorage.setItem('okx_balance_data', JSON.stringify(balanceData));
+            
+            // Обновляем отображение баланса
+            document.getElementById('current-balance-usdt').textContent = formatNumber(currentUSDT) + ' USDT';
+            document.getElementById('current-balance-uah').textContent = formatNumber(currentUAH) + ' UAH';
+            
+            // Рассчитываем общую прибыль/убыток
+            // Общая стоимость в USDT исходя из текущего рыночного курса
+            const currentRate = parseFloat(document.getElementById('rate').value) || 38.5;
+            const totalValueUSDT = currentUSDT + (currentUAH / currentRate);
+            const startingValueUSDT = balanceData.startingCapitalUSDT + (balanceData.startingCapitalUAH / currentRate);
+            const profitLossUSDT = totalValueUSDT - startingValueUSDT;
+            
+            // Обновляем информацию о прибыли/убытке
+            const profitLossElement = document.getElementById('total-profit-loss');
+            profitLossElement.textContent = formatNumber(profitLossUSDT) + ' USDT';
+            
+            if (profitLossUSDT > 0) {
+                profitLossElement.classList.add('positive');
+                profitLossElement.classList.remove('negative');
+            } else if (profitLossUSDT < 0) {
+                profitLossElement.classList.add('negative');
+                profitLossElement.classList.remove('positive');
+            } else {
+                profitLossElement.classList.remove('positive');
+                profitLossElement.classList.remove('negative');
+            }
+            
+            return {currentUSDT, currentUAH, profitLossUSDT};
+        }
+        
+        // Функция для обновления аналитики транзакций
+        function updateTransactionAnalytics() {
+            if (transactions.length === 0) {
+                document.getElementById('total-profit').textContent = '0 USDT';
+                document.getElementById('total-profit-uah').textContent = '0 UAH';
+                document.getElementById('average-spread').textContent = '0%';
+                document.getElementById('transaction-count').textContent = '0';
+                
+                // Обновляем баланс
+                updateBalance();
+                return;
+            }
+            
+            // Счетчики для расчета объемов транзакций
+            let totalBuyUSDT = 0;
+            let totalBuyUAH = 0;
+            let totalSellUSDT = 0;
+            let totalSellUAH = 0;
+            
+            transactions.forEach(transaction => {
+                const uahAmount = transaction.amount * transaction.rate;
+                
+                if (transaction.type === 'buy') {
+                    totalBuyUSDT += transaction.amount;
+                    totalBuyUAH += uahAmount;
+                } else {
+                    totalSellUSDT += transaction.amount;
+                    totalSellUAH += uahAmount;
+                }
+            });
+            
+            // Расчет средних курсов и спреда
+            const avgBuyRate = totalBuyUSDT > 0 ? totalBuyUAH / totalBuyUSDT : 0;
+            const avgSellRate = totalSellUSDT > 0 ? totalSellUAH / totalSellUSDT : 0;
+            
+            // Если были и покупки и продажи, вычисляем спред
+            let spreadPercent = 0;
+            if (avgBuyRate > 0 && avgSellRate > 0) {
+                spreadPercent = ((avgSellRate - avgBuyRate) / avgBuyRate) * 100;
+            }
+            
+            // Обновляем информацию о балансе
+            const {profitLossUSDT} = updateBalance();
+            
+            // Обновляем значения на странице
+            document.getElementById('total-profit').textContent = formatNumber(profitLossUSDT) + ' USDT';
+            document.getElementById('total-profit-uah').textContent = formatNumber(profitLossUSDT * avgSellRate) + ' UAH';
+            document.getElementById('average-spread').textContent = formatNumber(spreadPercent) + '%';
+            document.getElementById('transaction-count').textContent = transactions.length.toString();
+            
+            // Обновляем график, если Chart.js загружен
+            if (window.Chart && transactions.length > 1) {
+                updateProfitChart();
+            }
+        }
+        
+        // Функция для обновления графика прибыли
+        function updateProfitChart() {
+            // Проверяем доступность Chart.js
+            if (!window.Chart) {
+                return;
+            }
+            
+            // Получаем данные для графика
+            const dates = [];
+            const profits = [];
+            const balanceUSDT = [];
+            const balanceUAH = [];
+            
+            // Сортируем транзакции по дате
+            const sortedTransactions = [...transactions].sort((a, b) => new Date(a.date) - new Date(b.date));
+            
+            // Начинаем со стартового капитала
+            let currentUSDT = balanceData.startingCapitalUSDT;
+            let currentUAH = balanceData.startingCapitalUAH;
+            
+            // Группируем транзакции по дням
+            const dailyData = {};
+            
+            // Добавляем начальную точку с стартовым капиталом
+            const startDate = sortedTransactions.length > 0 ? 
+                              new Date(sortedTransactions[0].date) : new Date();
+            const startDateKey = new Date(startDate.setDate(startDate.getDate() - 1))
+                                .toISOString().split('T')[0];
+            
+            dates.push(startDateKey);
+            balanceUSDT.push(currentUSDT);
+            balanceUAH.push(currentUAH);
+            profits.push(0); // Начальная прибыль = 0
+            
+            // Подготавливаем данные для каждой транзакции
+            sortedTransactions.forEach(transaction => {
+                const date = new Date(transaction.date);
+                const dateKey = date.toISOString().split('T')[0];
+                
+                if (!dailyData[dateKey]) {
+                    dailyData[dateKey] = {
+                        date: date,
+                        transactions: []
+                    };
+                }
+                
+                dailyData[dateKey].transactions.push(transaction);
+            });
+            
+            // Вычисляем баланс и прибыль для каждого дня с транзакциями
+            const currentRate = parseFloat(document.getElementById('rate').value) || 38.5;
+            const startingTotalValueUSDT = balanceData.startingCapitalUSDT + 
+                                          (balanceData.startingCapitalUAH / currentRate);
+            
+            // Преобразуем данные для графика
+            Object.keys(dailyData).sort().forEach(dateKey => {
+                const dayData = dailyData[dateKey];
+                
+                // Применяем все транзакции за день
+                dayData.transactions.forEach(transaction => {
+                    const uahAmount = transaction.amount * transaction.rate;
+                    
+                    if (transaction.type === 'buy') {
+                        // Покупка USDT: увеличиваем USDT, уменьшаем UAH
+                        currentUSDT += transaction.amount;
+                        currentUAH -= uahAmount;
+                    } else {
+                        // Продажа USDT: уменьшаем USDT, увеличиваем UAH
+                        currentUSDT -= transaction.amount;
+                        currentUAH += uahAmount;
+                    }
+                });
+                
+                // Вычисляем общую стоимость в USDT на текущий день
+                const totalValueUSDT = currentUSDT + (currentUAH / currentRate);
+                const profitLossUSDT = totalValueUSDT - startingTotalValueUSDT;
+                
+                // Добавляем данные для графика
+                dates.push(dateKey);
+                balanceUSDT.push(currentUSDT);
+                balanceUAH.push(currentUAH);
+                profits.push(profitLossUSDT);
+            });
+            
+            // Создаем или обновляем график
+            const ctx = document.getElementById('profit-chart').getContext('2d');
+            
+            // Удаляем предыдущий график, если он существует
+            if (window.profitChart) {
+                window.profitChart.destroy();
+            }
+            
+            window.profitChart = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: dates,
+                    datasets: [
+                        {
+                            label: 'Прибыль/убыток (USDT)',
+                            data: profits,
+                            backgroundColor: 'rgba(0, 176, 103, 0.2)',
+                            borderColor: 'rgba(0, 176, 103, 1)',
+                            borderWidth: 2,
+                            tension: 0.1,
+                            yAxisID: 'y'
+                        },
+                        {
+                            label: 'Баланс USDT',
+                            data: balanceUSDT,
+                            backgroundColor: 'rgba(0, 102, 204, 0.2)',
+                            borderColor: 'rgba(0, 102, 204, 1)',
+                            borderWidth: 2,
+                            tension: 0.1,
+                            hidden: true,
+                            yAxisID: 'y'
+                        },
+                        {
+                            label: 'Баланс UAH',
+                            data: balanceUAH,
+                            backgroundColor: 'rgba(230, 126, 34, 0.2)',
+                            borderColor: 'rgba(230, 126, 34, 1)',
+                            borderWidth: 2,
+                            tension: 0.1,
+                            hidden: true,
+                            yAxisID: 'y'
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        y: {
+                            beginAtZero: false,
+                            title: {
+                                display: true,
+                                text: 'Значение (USDT/UAH)'
+                            }
+                        }
+                    },
+                    plugins: {
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    let label = context.dataset.label || '';
+                                    if (label) {
+                                        label += ': ';
+                                    }
+                                    label += formatNumber(context.parsed.y);
+                                    return label;
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+        }
+        
+        // Функция для переключения между вкладками
+        function switchTab(tabName) {
+            // Скрываем все вкладки
+            document.querySelectorAll('.tab-content').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            
+            // Отображаем выбранную вкладку
+            document.getElementById(tabName + '-tab').classList.add('active');
+            
+            // Обновляем активную кнопку
+            document.querySelectorAll('.tab-button').forEach(button => {
+                button.classList.remove('active');
+            });
+            
+            document.querySelector(`.tab-button[data-tab="${tabName}"]`).classList.add('active');
+        }
+        
+        // Функция дебаунсинга для предотвращения слишком частых вызовов функций
+        function debounce(func, wait) {
+            let timeout;
+            return function() {
+                const context = this;
+                const args = arguments;
+                clearTimeout(timeout);
+                timeout = setTimeout(() => {
+                    func.apply(context, args);
+                }, wait);
+            };
+        }
+        
+        // Дебаунсинг функции расчета прибыли для повышения производительности
+        const debouncedCalculateProfit = debounce(calculateProfit, 300);
+        const debouncedFetchOKXData = debounce(fetchOKXData, 500);
+
+        // Функция для проверки поддержки ServiceWorker и регистрации его при необходимости
+        function setupServiceWorker() {
+            if ('serviceWorker' in navigator) {
+                window.addEventListener('load', () => {
+                    navigator.serviceWorker.register('/service-worker.js')
+                        .then(registration => {
+                            console.log('ServiceWorker зарегистрирован:', registration.scope);
+                        })
+                        .catch(error => {
+                            console.log('Регистрация ServiceWorker не удалась:', error);
+                        });
+                });
+            }
+        }
+
+        // Функция для проверки наличия темного режима и применения соответствующих стилей
+        function setupThemePreference() {
+            const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+            if (prefersDark) {
+                document.body.classList.add('dark-mode');
+            }
+
+            // Слушаем изменения темы системы
+            window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', e => {
+                if (e.matches) {
+                    document.body.classList.add('dark-mode');
+                } else {
+                    document.body.classList.remove('dark-mode');
+                }
+            });
+        }
+
+        // Функция для оптимизации работы с таблицами
+        function setupTableOptimizations() {
+            // Проверяем ширину экрана для адаптации таблиц
+            const isMobile = window.innerWidth < 768;
+            
+            // Показываем или скрываем определенные столбцы для мобильных устройств
+            const mobileHiddenColumns = document.querySelectorAll('.mobile-hidden');
+            mobileHiddenColumns.forEach(column => {
+                column.style.display = isMobile ? 'none' : 'table-cell';
+            });
+            
+            // Используем делегирование событий вместо множества отдельных слушателей
+            document.addEventListener('click', function(e) {
+                if (e.target && e.target.classList.contains('delete-transaction')) {
+                    const id = parseInt(e.target.getAttribute('data-id'));
+                    if (confirm('Вы уверены, что хотите удалить эту транзакцию?')) {
+                        deleteTransaction(id);
+                    }
+                }
+            });
+        }
+        
+        // Объединенная функция для установки всех обработчиков событий
+        function setupEventListeners() {
+            // Обработчики событий для калькулятора
+            document.getElementById('calculate').addEventListener('click', debouncedCalculateProfit);
+            document.getElementById('update-rates').addEventListener('click', debouncedFetchOKXData);
+            
+            // Обработчики для сценариев с использованием делегирования событий
+            document.querySelector('.scenarios').addEventListener('click', function(e) {
+                if (e.target && e.target.classList.contains('scenario')) {
+                    applyScenario({ target: e.target });
+                }
+            });
+            
+            // Обработчики изменения значений полей калькулятора с дебаунсингом
             const inputFields = ['capital', 'spread', 'rate', 'utilization', 'turnover'];
             inputFields.forEach(fieldId => {
-                document.getElementById(fieldId).addEventListener('change', function() {
-                    // Удаляем активный класс со всех сценариев
+                document.getElementById(fieldId).addEventListener('input', function() {
                     document.querySelectorAll('.scenario').forEach(s => s.classList.remove('active'));
-                    calculateProfit();
-                    generateRecommendations();
+                    debouncedCalculateProfit();
+                    
+                    // Обновляем баланс при изменении курса
+                    if (fieldId === 'rate') {
+                        updateBalance();
+                    }
                 });
             });
             
@@ -900,16 +2285,74 @@
             // Обработчик изменения интервала автообновления
             document.getElementById('update-interval').addEventListener('change', function() {
                 if (document.getElementById('auto-update-toggle').checked) {
-                    startAutoUpdateTimer(); // Перезапускаем с новым интервалом
+                    startAutoUpdateTimer();
                 }
             });
+            
+            // Обработчик переключения вкладок
+            document.querySelector('.tab-navigation').addEventListener('click', function(e) {
+                if (e.target && e.target.classList.contains('tab-button')) {
+                    switchTab(e.target.getAttribute('data-tab'));
+                    
+                    // Обновляем баланс при переключении на вкладку транзакций
+                    if (e.target.getAttribute('data-tab') === 'transactions') {
+                        updateBalance();
+                    }
+                }
+            });
+            
+            // Обработчики для раздела транзакций
+            document.getElementById('add-transaction').addEventListener('click', addTransaction);
+            document.getElementById('export-data').addEventListener('click', exportData);
+            document.getElementById('import-data').addEventListener('click', importData);
+            document.getElementById('import-file').addEventListener('change', handleFileUpload);
+            
+            // Обработчик для обновления стартового капитала
+            document.getElementById('update-starting-capital').addEventListener('click', updateStartingCapital);
+            
+            // Обработчики изменения полей стартового капитала
+            const capitalFields = ['starting-capital-usdt', 'starting-capital-uah'];
+            capitalFields.forEach(fieldId => {
+                document.getElementById(fieldId).addEventListener('input', function() {
+                    // При изменении значений не сохраняем сразу, ждем нажатия на кнопку
+                });
+            });
+        }
+        
+        // Функция для инициализации всех компонентов
+        function initialize() {
+            // Установка текущей даты в поле формы
+            const now = new Date();
+            now.setMinutes(now.getMinutes() - now.getTimezoneOffset());
+            document.getElementById('transaction-date').value = now.toISOString().slice(0, 16);
+            
+            // Загрузка сохраненных транзакций
+            loadTransactions();
+            
+            // Загрузка данных о балансе
+            loadBalanceData();
+            
+            // Установка оптимизаций
+            setupServiceWorker();
+            setupThemePreference();
+            setupTableOptimizations();
+            setupEventListeners();
+            
+            // Добавляем слушатель для адаптации при изменении размера окна
+            window.addEventListener('resize', debounce(setupTableOptimizations, 250));
             
             // Запускаем начальный расчет
             calculateProfit();
             
+            // Пересчитываем баланс и прибыль
+            updateBalance();
+            
             // Загружаем данные с API
             fetchOKXData();
-        });
+        }
+        
+        // Обработчики событий при загрузке страницы
+        document.addEventListener('DOMContentLoaded', initialize);
     </script>
 </body>
 </html>
