@@ -451,6 +451,16 @@
             display: flex;
             gap: 10px;
             margin-top: 20px;
+            flex-wrap: wrap;
+        }
+        
+        .clear-data {
+            background-color: #e53935;
+            color: white;
+        }
+        
+        .clear-data:hover {
+            background-color: #c62828;
         }
 
         /* Стили для информации о балансе */
@@ -1076,6 +1086,7 @@
                     <button id="export-data">Экспорт данных</button>
                     <button id="import-data">Импорт данных</button>
                     <input type="file" id="import-file" accept=".json" style="display: none;">
+                    <button id="clear-data" class="clear-data">Очистить все данные</button>
                 </div>
                 
                 <h3>История транзакций</h3>
@@ -1675,8 +1686,23 @@
         
         // Функция для удаления транзакции
         function deleteTransaction(id) {
+            console.log(`Удаление транзакции с ID: ${id}`);
+            
+            // Убедимся, что id корректный и есть такая транзакция
+            const transactionIndex = transactions.findIndex(t => t.id === id);
+            if (transactionIndex === -1) {
+                console.warn(`Транзакция с ID ${id} не найдена`);
+                return;
+            }
+            
+            // Удаляем транзакцию
             transactions = transactions.filter(t => t.id !== id);
+            console.log(`Транзакция удалена. Осталось транзакций: ${transactions.length}`);
+            
+            // Сохраняем обновленный список транзакций
             saveTransactions();
+            
+            // Обновляем отображение
             updateTransactionTable();
             
             // Обновляем баланс и аналитику
@@ -1707,6 +1733,38 @@
         // Функция для импорта данных
         function importData() {
             document.getElementById('import-file').click();
+        }
+        
+        // Функция для очистки всех данных
+        function clearAllData() {
+            if (confirm('Вы уверены, что хотите удалить ВСЕ данные? Это действие нельзя отменить!')) {
+                // Сброс транзакций
+                transactions = [];
+                
+                // Сброс баланса
+                balanceData = {
+                    startingCapitalUSDT: 0,
+                    startingCapitalUAH: 0,
+                    currentUSDT: 0,
+                    currentUAH: 0,
+                    lastUpdateTime: new Date()
+                };
+                
+                // Сохраняем пустые данные
+                saveTransactions();
+                localStorage.setItem('okx_balance_data', JSON.stringify(balanceData));
+                
+                // Обновляем поля ввода
+                document.getElementById('starting-capital-usdt').value = 0;
+                document.getElementById('starting-capital-uah').value = 0;
+                
+                // Обновляем интерфейс
+                updateTransactionTable();
+                updateBalance();
+                updateTransactionAnalytics();
+                
+                alert('Все данные успешно удалены!');
+            }
         }
         
         // Функция для обработки загруженного файла
@@ -1842,14 +1900,22 @@
                 tbody.appendChild(tr);
             });
             
-            // Добавляем обработчики для кнопок удаления
+            // Удаляем старые обработчики перед добавлением новых
             document.querySelectorAll('.delete-transaction').forEach(button => {
-                button.addEventListener('click', function() {
-                    const id = parseInt(this.getAttribute('data-id'));
+                // Удаляем все существующие обработчики событий
+                const newButton = button.cloneNode(true);
+                button.parentNode.replaceChild(newButton, button);
+            });
+            
+            // Используем делегирование событий вместо индивидуальных обработчиков
+            document.querySelector('#transactions-table tbody').addEventListener('click', function(e) {
+                // Проверяем, что клик был по кнопке удаления
+                if (e.target && e.target.classList.contains('delete-transaction')) {
+                    const id = parseInt(e.target.getAttribute('data-id'));
                     if (confirm('Вы уверены, что хотите удалить эту транзакцию?')) {
                         deleteTransaction(id);
                     }
-                });
+                }
             });
         }
         
@@ -2306,6 +2372,7 @@
             document.getElementById('export-data').addEventListener('click', exportData);
             document.getElementById('import-data').addEventListener('click', importData);
             document.getElementById('import-file').addEventListener('change', handleFileUpload);
+            document.getElementById('clear-data').addEventListener('click', clearAllData);
             
             // Обработчик для обновления стартового капитала
             document.getElementById('update-starting-capital').addEventListener('click', updateStartingCapital);
