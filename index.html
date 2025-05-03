@@ -41,6 +41,52 @@
             width: 100%;
             overflow-x: hidden; /* Предотвращаем горизонтальную прокрутку */
         }
+        
+        /* Стили для двухколоночного макета */
+        .calculator-columns {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+            width: 100%;
+        }
+        
+        /* На десктопах - две колонки */
+        @media (min-width: 1024px) {
+            .calculator-column {
+                flex: 1;
+                display: flex;
+                flex-direction: column;
+                gap: 20px;
+            }
+            
+            .left-column {
+                flex-basis: calc(40% - 10px); /* Левая колонка немного уже */
+                flex-grow: 0;
+                max-width: calc(40% - 10px);
+            }
+            
+            .right-column {
+                flex-basis: calc(60% - 10px); /* Правая колонка немного шире */
+                flex-grow: 0;
+                max-width: calc(60% - 10px);
+            }
+            
+            .card {
+                margin: 0;
+                height: 100%;
+            }
+            
+            .inputs-card, .results-card {
+                flex: 0 0 auto;
+                width: 100%;
+            }
+            
+            .market-card {
+                min-height: 100%;
+                flex: 1;
+                width: 100%;
+            }
+        }
 
         .header {
             width: 100%;
@@ -64,8 +110,9 @@
             border-radius: 10px;
             box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
             padding: 20px;
-            flex: 1;
-            min-width: 300px;
+            min-width: 250px;
+            display: flex;
+            flex-direction: column;
         }
 
         .inputs-card {
@@ -78,6 +125,24 @@
 
         .market-card {
             width: 100%;
+        }
+        
+        /* Стили для мобильных устройств */
+        @media (max-width: 1023px) {
+            .calculator-column {
+                width: 100%;
+                margin-bottom: 20px;
+            }
+            
+            .card {
+                width: 100%;
+                margin-bottom: 20px;
+            }
+            
+            .inputs-card, .results-card, .market-card {
+                flex: none;
+                width: 100%;
+            }
         }
 
         h2 {
@@ -545,6 +610,57 @@
             border-left: 0.25rem solid var(--accent-color);
         }
         
+        /* Дополнительные стили для красивого отображения рекомендаций */
+        .recommendation-box {
+            margin-top: 15px;
+        }
+        
+        .rec-title {
+            font-size: 1.1em;
+            font-weight: 600;
+            color: var(--secondary-color);
+            margin-bottom: 10px;
+        }
+        
+        .rec-details {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            margin-bottom: 15px;
+        }
+        
+        .rec-item {
+            padding: 10px;
+            background-color: #f8f9fa;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+        }
+        
+        .rec-label {
+            font-weight: 600;
+            color: var(--secondary-color);
+            margin-bottom: 5px;
+        }
+        
+        .rec-value {
+            font-size: 1.2em;
+            font-weight: 700;
+            margin-bottom: 3px;
+        }
+        
+        .rec-buy {
+            color: var(--accent-color);
+        }
+        
+        .rec-sell {
+            color: #e53935;
+        }
+        
+        .rec-info {
+            font-size: 0.85em;
+            color: #555;
+        }
+        
         .market-analysis h3 {
             color: var(--primary-color);
             margin-top: 0;
@@ -772,6 +888,19 @@
             #update-starting-capital {
                 background-color: var(--primary-color);
             }
+            
+            /* Дополнительные стили для темного режима */
+            .rec-item {
+                background-color: #2a2a2a;
+            }
+            
+            .rec-info {
+                color: var(--light-text);
+            }
+            
+            .rec-title, .rec-label {
+                color: var(--secondary-color);
+            }
         }
     </style>
 </head>
@@ -802,199 +931,211 @@
         
         <!-- Вкладка калькулятора -->
         <div id="calculator-tab" class="tab-content active">
-            <div class="card inputs-card">
-                <h2>Параметры расчета</h2>
-                <div class="input-group">
-                    <label for="capital">Капитал (USDT)</label>
-                    <input type="number" id="capital" step="100" min="0" value="1000">
-                </div>
-                <div class="input-group">
-                    <label for="spread">Спред (%)</label>
-                    <input type="number" id="spread" step="0.01" min="0" value="1.0">
-                </div>
-                <div class="input-group">
-                    <label for="rate">Средний курс (UAH/USDT)</label>
-                    <input type="number" id="rate" step="0.01" min="0" value="38.5">
-                </div>
-                <div class="input-group">
-                    <label for="utilization">Загрузка капитала (%)</label>
-                    <input type="number" id="utilization" step="1" min="0" max="100" value="80">
-                </div>
-                <div class="input-group">
-                    <label for="turnover">Количество оборотов в день</label>
-                    <input type="number" id="turnover" step="0.1" min="0" value="3">
-                </div>
-                
-                <button id="calculate">Рассчитать прибыль</button>
-                
-                <div class="scenario-container">
-                    <div class="result-label">Предустановленные сценарии:</div>
-                    <div class="scenarios">
-                        <div class="scenario" data-capital="1000" data-spread="0.5" data-utilization="70" data-turnover="2">Малый капитал</div>
-                        <div class="scenario" data-capital="5000" data-spread="1" data-utilization="80" data-turnover="3">Средний капитал</div>
-                        <div class="scenario" data-capital="10000" data-spread="1.5" data-utilization="90" data-turnover="4">Крупный капитал</div>
-                    </div>
-                </div>
-                
-                <div id="error-message" class="error-message">
-                    Ошибка при получении данных. Убедитесь, что прокси-сервер запущен.
-                </div>
-            </div>
-            
-            <div class="card results-card">
-                <h2>Результаты расчета</h2>
-                <div class="result-group">
-                    <div class="result-label">Дневная прибыль:</div>
-                    <div class="result-value" id="daily-profit">0 USDT</div>
-                    <div class="small-text" id="daily-profit-uah">0 UAH</div>
-                </div>
-                <div class="result-group">
-                    <div class="result-label">Месячная прибыль (30 дней):</div>
-                    <div class="result-value" id="monthly-profit">0 USDT</div>
-                    <div class="small-text" id="monthly-profit-uah">0 UAH</div>
-                </div>
-                <div class="result-group">
-                    <div class="result-label">Годовая прибыль:</div>
-                    <div class="result-value" id="yearly-profit">0 USDT</div>
-                    <div class="small-text" id="yearly-profit-uah">0 UAH</div>
-                </div>
-                <div class="result-group">
-                    <div class="result-label">Годовая доходность:</div>
-                    <div class="result-value" id="yearly-percentage">0%</div>
-                </div>
-                <div class="result-group">
-                    <div class="result-label">Рабочий капитал:</div>
-                    <div class="result-value" id="working-capital">0 USDT</div>
-                </div>
-                <div class="result-group">
-                    <div class="result-label">Фактический спред:</div>
-                    <div class="result-value" id="actual-spread">0 UAH</div>
-                    <div class="small-text" id="spread-percentage">0%</div>
-                </div>
-                <div class="suggested-prices hidden" id="suggested-prices-container">
-                    <div class="result-label">Рекомендуемые цены:</div>
-                    <div class="result-value" id="buy-price">Покупка: 0 UAH</div>
-                    <div class="result-value" id="sell-price">Продажа: 0 UAH</div>
-                </div>
-            </div>
-            
-            <div class="card market-card">
-                <h2>Рыночные данные OKX P2P <span id="loading-spinner" class="loading"></span></h2>
-                <button id="update-rates">Обновить курсы</button>
-                
-                <div class="recommendation-box" id="recommendation-box">
-                    <div class="rec-title">Рекомендации для маркетмейкинга:</div>
-                    <div class="rec-details">
-                        <div class="rec-item">
-                            <div class="rec-label">Покупать по:</div>
-                            <div class="rec-value rec-buy" id="rec-buy-price">0 UAH</div>
-                            <div class="rec-info" id="rec-buy-info">Лучшая цена покупки минус наценка</div>
+            <!-- Контейнер для двухколоночного макета -->
+            <div class="calculator-columns">
+                <!-- Левая колонка - Параметры и результаты расчета -->
+                <div class="calculator-column left-column">
+                    <!-- Параметры расчета -->
+                    <div class="card inputs-card">
+                        <h2>Параметры расчета</h2>
+                        <div class="input-group">
+                            <label for="capital">Капитал (USDT)</label>
+                            <input type="number" id="capital" step="100" min="0" value="1000">
                         </div>
-                        <div class="rec-item">
-                            <div class="rec-label">Продавать по:</div>
-                            <div class="rec-value rec-sell" id="rec-sell-price">0 UAH</div>
-                            <div class="rec-info" id="rec-sell-info">Лучшая цена продажи плюс наценка</div>
+                        <div class="input-group">
+                            <label for="spread">Спред (%)</label>
+                            <input type="number" id="spread" step="0.01" min="0" value="1.0">
                         </div>
-                        <div class="rec-item">
-                            <div class="rec-label">Ожидаемый спред:</div>
-                            <div class="rec-value" id="rec-spread">0%</div>
-                            <div class="rec-info" id="rec-profit">Потенциальная прибыль: 0 USDT</div>
+                        <div class="input-group">
+                            <label for="rate">Средний курс (UAH/USDT)</label>
+                            <input type="number" id="rate" step="0.01" min="0" value="38.5">
+                        </div>
+                        <div class="input-group">
+                            <label for="utilization">Загрузка капитала (%)</label>
+                            <input type="number" id="utilization" step="1" min="0" max="100" value="80">
+                        </div>
+                        <div class="input-group">
+                            <label for="turnover">Количество оборотов в день</label>
+                            <input type="number" id="turnover" step="0.1" min="0" value="3">
+                        </div>
+                        
+                        <button id="calculate">Рассчитать прибыль</button>
+                        
+                        <div class="scenario-container">
+                            <div class="result-label">Предустановленные сценарии:</div>
+                            <div class="scenarios">
+                                <div class="scenario" data-capital="1000" data-spread="0.5" data-utilization="70" data-turnover="2">Малый капитал</div>
+                                <div class="scenario" data-capital="5000" data-spread="1" data-utilization="80" data-turnover="3">Средний капитал</div>
+                                <div class="scenario" data-capital="10000" data-spread="1.5" data-utilization="90" data-turnover="4">Крупный капитал</div>
+                            </div>
+                        </div>
+                        
+                        <div id="error-message" class="error-message">
+                            Ошибка при получении данных. Убедитесь, что прокси-сервер запущен.
                         </div>
                     </div>
                     
-                    <div class="market-analysis">
-                        <h3>Анализ рынка</h3>
-                        <div class="market-analysis-grid">
-                            <div class="analysis-card">
-                                <div class="analysis-title">
-                                    Реальный спред маркетмейкеров:
-                                    <div class="tooltip">
-                                        <span class="tooltip-icon">?</span>
-                                        <span class="tooltip-text">Разница между лучшей ценой покупки и продажи на рынке. Характеризует текущую волатильность.</span>
-                                    </div>
-                                </div>
-                                <div class="analysis-value" id="market-makers-spread">0%</div>
-                                <div class="analysis-info" id="market-makers-spread-info">Средний спред между лучшими ценами</div>
-                            </div>
-                            <div class="analysis-card">
-                                <div class="analysis-title">
-                                    Лучшая цена на покупку USDT:
-                                    <div class="tooltip">
-                                        <span class="tooltip-icon">?</span>
-                                        <span class="tooltip-text">Самая низкая цена USDT на рынке. Используйте эту информацию для установки цены продажи.</span>
-                                    </div>
-                                </div>
-                                <div class="analysis-value positive" id="best-buy-price">0 UAH</div>
-                                <div class="analysis-info">Минимальная цена + <span id="avg-buy-volume">0</span> USDT доступно</div>
-                            </div>
-                            <div class="analysis-card">
-                                <div class="analysis-title">
-                                    Лучшая цена на продажу USDT:
-                                    <div class="tooltip">
-                                        <span class="tooltip-icon">?</span>
-                                        <span class="tooltip-text">Самая высокая цена USDT на рынке. Используйте эту информацию для установки цены покупки.</span>
-                                    </div>
-                                </div>
-                                <div class="analysis-value negative" id="best-sell-price">0 UAH</div>
-                                <div class="analysis-info">Максимальная цена + <span id="avg-sell-volume">0</span> USDT доступно</div>
-                            </div>
-                            <div class="analysis-card">
-                                <div class="analysis-title">
-                                    Прибыль с оборота капитала:
-                                    <div class="tooltip">
-                                        <span class="tooltip-icon">?</span>
-                                        <span class="tooltip-text">Расчетная прибыль при единоразовом обороте указанной суммы USDT с использованием текущего рыночного спреда.</span>
-                                    </div>
-                                </div>
-                                <div class="analysis-value" id="capital-turnover-profit">0 USDT</div>
-                                <div class="analysis-info">При обороте в <span id="capital-amount">1000</span> USDT</div>
-                            </div>
+                    <!-- Результаты расчета -->
+                    <div class="card results-card">
+                        <h2>Результаты расчета</h2>
+                        <div class="result-group">
+                            <div class="result-label">Дневная прибыль:</div>
+                            <div class="result-value" id="daily-profit">0 USDT</div>
+                            <div class="small-text" id="daily-profit-uah">0 UAH</div>
+                        </div>
+                        <div class="result-group">
+                            <div class="result-label">Месячная прибыль (30 дней):</div>
+                            <div class="result-value" id="monthly-profit">0 USDT</div>
+                            <div class="small-text" id="monthly-profit-uah">0 UAH</div>
+                        </div>
+                        <div class="result-group">
+                            <div class="result-label">Годовая прибыль:</div>
+                            <div class="result-value" id="yearly-profit">0 USDT</div>
+                            <div class="small-text" id="yearly-profit-uah">0 UAH</div>
+                        </div>
+                        <div class="result-group">
+                            <div class="result-label">Годовая доходность:</div>
+                            <div class="result-value" id="yearly-percentage">0%</div>
+                        </div>
+                        <div class="result-group">
+                            <div class="result-label">Рабочий капитал:</div>
+                            <div class="result-value" id="working-capital">0 USDT</div>
+                        </div>
+                        <div class="result-group">
+                            <div class="result-label">Фактический спред:</div>
+                            <div class="result-value" id="actual-spread">0 UAH</div>
+                            <div class="small-text" id="spread-percentage">0%</div>
+                        </div>
+                        <div class="suggested-prices hidden" id="suggested-prices-container">
+                            <div class="result-label">Рекомендуемые цены:</div>
+                            <div class="result-value" id="buy-price">Покупка: 0 UAH</div>
+                            <div class="result-value" id="sell-price">Продажа: 0 UAH</div>
                         </div>
                     </div>
                 </div>
                 
-                <div class="market-rates">
-                    <div class="rate-card">
-                        <div class="rate-header">Предложения на покупку USDT (продажа UAH)</div>
-                        <div class="mobile-scroll-wrapper">
-                            <table id="buy-orders">
-                                <thead>
-                                    <tr>
-                                        <th>Цена (UAH)</th>
-                                        <th>Доступно (USDT)</th>
-                                        <th class="mobile-hidden">Платежные методы</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    <tr>
-                                        <td colspan="3">Загрузка данных...</td>
-                                    </tr>
-                                </tbody>
-                            </table>
+                <!-- Правая колонка - Рыночные данные -->
+                <div class="calculator-column right-column">
+                    <!-- Рыночные данные -->
+                    <div class="card market-card">
+                        <h2>Рыночные данные OKX P2P <span id="loading-spinner" class="loading"></span></h2>
+                        <button id="update-rates">Обновить курсы</button>
+                        
+                        <div class="recommendation-box" id="recommendation-box">
+                            <div class="rec-title">Рекомендации для маркетмейкинга:</div>
+                            <div class="rec-details">
+                                <div class="rec-item">
+                                    <div class="rec-label">Покупать по:</div>
+                                    <div class="rec-value rec-buy" id="rec-buy-price">0 UAH</div>
+                                    <div class="rec-info" id="rec-buy-info">Лучшая цена покупки минус наценка</div>
+                                </div>
+                                <div class="rec-item">
+                                    <div class="rec-label">Продавать по:</div>
+                                    <div class="rec-value rec-sell" id="rec-sell-price">0 UAH</div>
+                                    <div class="rec-info" id="rec-sell-info">Лучшая цена продажи плюс наценка</div>
+                                </div>
+                                <div class="rec-item">
+                                    <div class="rec-label">Ожидаемый спред:</div>
+                                    <div class="rec-value" id="rec-spread">0%</div>
+                                    <div class="rec-info" id="rec-profit">Потенциальная прибыль: 0 USDT</div>
+                                </div>
+                            </div>
+                            
+                            <div class="market-analysis">
+                                <h3>Анализ рынка</h3>
+                                <div class="market-analysis-grid">
+                                    <div class="analysis-card">
+                                        <div class="analysis-title">
+                                            Реальный спред маркетмейкеров:
+                                            <div class="tooltip">
+                                                <span class="tooltip-icon">?</span>
+                                                <span class="tooltip-text">Разница между лучшей ценой покупки и продажи на рынке. Характеризует текущую волатильность.</span>
+                                            </div>
+                                        </div>
+                                        <div class="analysis-value" id="market-makers-spread">0%</div>
+                                        <div class="analysis-info" id="market-makers-spread-info">Средний спред между лучшими ценами</div>
+                                    </div>
+                                    <div class="analysis-card">
+                                        <div class="analysis-title">
+                                            Лучшая цена на покупку USDT:
+                                            <div class="tooltip">
+                                                <span class="tooltip-icon">?</span>
+                                                <span class="tooltip-text">Самая низкая цена USDT на рынке. Используйте эту информацию для установки цены продажи.</span>
+                                            </div>
+                                        </div>
+                                        <div class="analysis-value positive" id="best-buy-price">0 UAH</div>
+                                        <div class="analysis-info">Минимальная цена + <span id="avg-buy-volume">0</span> USDT доступно</div>
+                                    </div>
+                                    <div class="analysis-card">
+                                        <div class="analysis-title">
+                                            Лучшая цена на продажу USDT:
+                                            <div class="tooltip">
+                                                <span class="tooltip-icon">?</span>
+                                                <span class="tooltip-text">Самая высокая цена USDT на рынке. Используйте эту информацию для установки цены покупки.</span>
+                                            </div>
+                                        </div>
+                                        <div class="analysis-value negative" id="best-sell-price">0 UAH</div>
+                                        <div class="analysis-info">Максимальная цена + <span id="avg-sell-volume">0</span> USDT доступно</div>
+                                    </div>
+                                    <div class="analysis-card">
+                                        <div class="analysis-title">
+                                            Прибыль с оборота капитала:
+                                            <div class="tooltip">
+                                                <span class="tooltip-icon">?</span>
+                                                <span class="tooltip-text">Расчетная прибыль при единоразовом обороте указанной суммы USDT с использованием текущего рыночного спреда.</span>
+                                            </div>
+                                        </div>
+                                        <div class="analysis-value" id="capital-turnover-profit">0 USDT</div>
+                                        <div class="analysis-info">При обороте в <span id="capital-amount">1000</span> USDT</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="market-rates">
+                            <div class="rate-card">
+                                <div class="rate-header">Предложения на покупку USDT (продажа UAH)</div>
+                                <div class="mobile-scroll-wrapper">
+                                    <table id="buy-orders">
+                                        <thead>
+                                            <tr>
+                                                <th>Цена (UAH)</th>
+                                                <th>Доступно (USDT)</th>
+                                                <th class="mobile-hidden">Платежные методы</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr>
+                                                <td colspan="3">Загрузка данных...</td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                            <div class="rate-card">
+                                <div class="rate-header">Предложения на продажу USDT (покупка UAH)</div>
+                                <div class="mobile-scroll-wrapper">
+                                    <table id="sell-orders">
+                                        <thead>
+                                            <tr>
+                                                <th>Цена (UAH)</th>
+                                                <th>Доступно (USDT)</th>
+                                                <th class="mobile-hidden">Платежные методы</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr>
+                                                <td colspan="3">Загрузка данных...</td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="update-time" id="update-time">
+                            Последнее обновление: никогда
                         </div>
                     </div>
-                    <div class="rate-card">
-                        <div class="rate-header">Предложения на продажу USDT (покупка UAH)</div>
-                        <div class="mobile-scroll-wrapper">
-                            <table id="sell-orders">
-                                <thead>
-                                    <tr>
-                                        <th>Цена (UAH)</th>
-                                        <th>Доступно (USDT)</th>
-                                        <th class="mobile-hidden">Платежные методы</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    <tr>
-                                        <td colspan="3">Загрузка данных...</td>
-                                    </tr>
-                                </tbody>
-                            </table>
-                        </div>
-                    </div>
-                </div>
-                <div class="update-time" id="update-time">
-                    Последнее обновление: никогда
                 </div>
             </div>
         </div>
